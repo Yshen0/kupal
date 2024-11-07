@@ -1,0 +1,334 @@
+package jaddle;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+public class Jaddle {
+    private static final int MAX_LIVES = 5;
+    private static int currentLives = MAX_LIVES;
+    
+    private static int totalPoints = 0; // to keep track of all points gained
+    private static int levelPoints = 0; // Track points specific to the current level
+    private static final int POINTS_PER_CORRECT_ANSWER = 10; 
+    private static final int POINTS_DEDUCT_WRONG_ANSWER = 5; // Deduct 5 points for each wrong answer
+    private static final int LIFE_REGENERATION_TIME = 10000; // 10 seconds in milliseconds
+    
+    // Level Points Requirements
+    private static final int LEVEL_2_UNLOCK_POINTS = 20;
+    private static final int LEVEL_3_UNLOCK_POINTS = 25;
+    private static final int LEVEL_4_UNLOCK_POINTS = 30;
+    private static final int LEVEL_5_UNLOCK_POINTS = 35;
+    private static final int LEVEL_6_UNLOCK_POINTS = 40;
+    private static final int LEVEL_7_UNLOCK_POINTS = 40;
+    private static final int LEVEL_8_UNLOCK_POINTS = 50;
+    private static final int LEVEL_9_UNLOCK_POINTS = 55;
+    private static final int LEVEL_10_UNLOCK_POINTS = 60;
+    private static int currentLevel = 1; // Track the player's current level
+    public static void main(String[] args) {
+        ArrayList<Riddle> LVL1 = new ArrayList<>();
+        ArrayList<Riddle> LVL2 = new ArrayList<>();
+        ArrayList<Riddle> LVL3 = new ArrayList<>();
+        ArrayList<Riddle> LVL4 = new ArrayList<>();
+        ArrayList<Riddle> LVL5 = new ArrayList<>();
+        ArrayList<Riddle> LVL6 = new ArrayList<>();
+        ArrayList<Riddle> LVL7 = new ArrayList<>();
+        ArrayList<Riddle> LVL8 = new ArrayList<>();
+        ArrayList<Riddle> LVL9 = new ArrayList<>();
+        ArrayList<Riddle> LVL10 = new ArrayList<>();
+        
+        // Adding riddles with choices for levels 1 to 5
+       LVL1.add(new Riddle("Maliit pa si nene, nakakaakyat na sa tore.", "A. Langgam B. Daga C. Kuto D. Ipis", "A"));
+        LVL1.add(new Riddle("Heto na si Kaka, bubuka-bukaka.", "A. Zipper B. Palaka C. Gunting D. Pinto", "C"));
+        LVL1.add(new Riddle("Hindi pari, hindi hari, nagdadamit ng sari-sari.", "A. Salagubang B. Paru-paro C. Ipis D. Surot", "B"));
+        LVL1.add(new Riddle("Tubig na nagiging bato, bato na nagiging tubig.", "A. Kamao B. Kahoy C. Yelo D. Unan", "C"));
+        LVL1.add(new Riddle("Walang paa, nakakalakad, walang pakpak, nakakalipad.", "A. Hangin B. Ulap C. Paso D. Isda", "A"));
+        LVL1.add(new Riddle("Bata pa si Nene, marunong nang manahi.", "A. Bagyong dumaan B. Gagamba C. Alon D. Hangin", "B"));
+        
+        LVL2.add(new Riddle("Maputi kapag hilaw, itim kapag luto.", "A. Bakal B. Isda C. Paa D. Uling", "D"));
+        LVL2.add(new Riddle("Dalawang magkapatid, laging naghahabulan.", "A. Tutubi B. Sapatos C. Gulong D. Holen", "C"));
+        LVL2.add(new Riddle("Mataba na si Ma'am, naninilaw na ang katawan.", "A. Mangga B. Pinya C. Saging D. Sanyol", "A"));
+        LVL2.add(new Riddle("Kailangan sa kalangitan, mataba ang katawan.", "A. Ibon B. Hangin C. Buwan D. Ulap", "D"));
+        LVL2.add(new Riddle("Apat na binti, walang ulo, sa ilog tumatawid.", "A. Isda B. Sirena C. Alon D. Bangka", "D"));
+        LVL2.add(new Riddle("May mga binti walang hita, may katawan walang mukha.", "A. Mata B. Tsinelas C. Paa D. Lamesa", "D"));
+        
+        LVL3.add(new Riddle("May butas sa gitna, may masarap na laman sa loob.", "A. Donut B. Botones C. Sing-sing D. Kawayan", "A"));
+        LVL3.add(new Riddle("Minsan berdeng buhay, minsan tuyong patay.", "A. Dahon B. Damo C. Damit D. Sinulid", "B"));
+        LVL3.add(new Riddle("May katawan, walang ulo. May palda, walang paa.", "A. Palayok B. Sintas C. Damit D. Kawali", "A"));
+        LVL3.add(new Riddle("Kaisa-isang plato, kita sa buong mundo.", "A. Bato B. Hangin C. Mata D. Buwan", "D"));
+        LVL3.add(new Riddle("Babalik-balik, laging nasa sulok, nakasabit ngunit hindi damit.", "A. Basahan B. Mata C. Walis D. Alon", "C"));
+        LVL3.add(new Riddle("Isang bolang apoy na araw-araw tumataas, paglipas ng hapon ay nagwawala.", "A. Bato B. Lava C. Araw D. Apoy", "C"));
+        
+        LVL4.add(new Riddle("Mataas na kung tumindig, ngunit humahalik sa lupa kung magdapo.", "A. Bayabas B. Dahon ng saging C. Buhay D. Lupa", "B"));
+        LVL4.add(new Riddle("Ako ay may katawan at buhok, ngunit wala akong buhay.", "A. Mais B. Barbie C. Dalandan D. Kamote", "A"));
+        LVL4.add(new Riddle("Sa gabi ay patay, sa araw ay buhay.", "A. Hangin B. Bulaklak C. Buhay D. Lupa", "B"));
+        LVL4.add(new Riddle("Ako’y palaging nag-aalboroto sa tuwing uulan.", "A. Ilog B. Araw C. Bulkan D. Hininga", "A"));
+        LVL4.add(new Riddle("Hindi tao, hindi hayop, kung minsan ay may galit at kumukulo.", "A. Takure B. Bulkan C. Araw D. Lupa", "B"));
+        LVL4.add(new Riddle("Maliit na bagay na kayang bumuhay ng apoy.", "A. Lighter B. Goma C. Kuryente D. Posporo", "D"));
+        
+        LVL5.add(new Riddle("Minsan makulay, minsan puti, minsan basa, minsan tuyo.", "A. Orange B. Pineapple C. Mangga D. Damit", "D"));
+        LVL5.add(new Riddle("Nagsimula sa puno, naging bagay na mabigat, lumulutang kahit saan.", "A. Banana B. Barko C. Kasoy D. Buko", "B"));
+        LVL5.add(new Riddle("Madalas ihagis, madalas kunin; minsan ayaw bitawan.", "A. Sagwan B. CellPhone C. Bato D. Pera", "C"));
+        LVL5.add(new Riddle("Kung tawagin nila ako ay pambahay, ngunit laging nasa bubong.", "A. Yero B. Ibon C. Antena D. Dahon", "C"));
+        LVL5.add(new Riddle("Akyat-baba, may butas sa gitna.", "A. Siso B. Puno C. Donut D. Hagdan", "D"));
+        LVL5.add(new Riddle("Napakalaki, ‘di mo kayang liparin.", "A. Kalawakan B. Langit C. Bundok D. Buko", "B"));
+        
+        
+        // Levels 6 to 10 (without choices)
+        LVL6.add(new Riddle("May pusod ngunit walang tiyan.", "Bangka,bangka,boat,Boat"));
+        LVL6.add(new Riddle("Matamis na parang kendi, berde kapag sa puno ay nakabitin.", "Saging,saging,Banana,banana"));
+        LVL6.add(new Riddle("Hindi hayop, hindi tao, ngunit may mga kamay at paa.", "Relo,relo,watch,Watch"));
+        LVL6.add(new Riddle("Kapag hinawakan mo ako, tumitigil ang oras.", "Kandila,kandila,Candle,candle"));
+        LVL6.add(new Riddle("Ako’y parang ibon, ngunit hindi lumilipad, nakatali sa puno at umuuga lamang.", "Duyan,duyan,Swing,swing"));
+        LVL6.add(new Riddle("May katawan walang ulo, may pakpak ngunit di makalipad.", "Payong,payong,umbrella,Umbrella"));
+        
+        LVL7.add(new Riddle("Dalawang balon, hindi malingon.", "Tenga,tenga,Tainga,tainga,ears,Ears,Ear,ear"));
+        LVL7.add(new Riddle("Ako ay may kaibigan, kasama ko kahit saan.", "Anino,anino,shadow,Shadow"));
+        LVL7.add(new Riddle("Buto't balat, Lumilipad. Ano ako?", "Sarangola,sarangola,Kite,kite"));
+        LVL7.add(new Riddle("Isang prinsesa, nakaupo sa tasa.", "Kasoy,kasoy,Kasuy,kasuy"));
+        LVL7.add(new Riddle("Ang aking ulo’y bilog, nasa pusod ang utak ko.", "Patatas,patatas,Potato,potato"));
+        LVL7.add(new Riddle("Hindi tao, hindi hayop, ngunit lumuluha.", "Gripo,gripo,faucet,Faucet"));
+        
+        LVL8.add(new Riddle("Hindi tao, hindi hayop, kung uminom ay salup-salop.", "Tulay,tulay,Brige,brige"));
+        LVL8.add(new Riddle("Isa akong prinsesa, hinahanap ng mga tao, minsan ay nawawala.", "Perlas,perlas,pearl,Pearl"));
+        LVL8.add(new Riddle("Berdeng sanga, puno ng bola.", "Lansones,lansones"));
+        LVL8.add(new Riddle("Kapag ako’y iyong kinain, ikaw ay lalakas, ngunit kapag kinain kita, ikaw ay lalambot.", "Bawang,bawang,garlic,Garlic"));
+        LVL8.add(new Riddle("Isang balong malalim, punong-puno ng patalim.", "Bibig,bibig,mouth,Mouth"));
+        LVL8.add(new Riddle("Isang lalaking sakay-sakay, kung hindi lumalakad, sadyang umiindak.", "Bangkay,bangkay"));
+        
+        LVL9.add(new Riddle("sampung maliliit, sila ay dikit dikit.", "daliri,Daliri,fingers,Fingers"));
+        LVL9.add(new Riddle("Laging nauuna sa isip, laging nasa huli kapag nagsasalita.", "Dila,dila,tongue,Tongue"));
+        LVL9.add(new Riddle("Puno ay may berdeng dahon, ngunit wala sa kagubatan.", "Salamin,salamin,mirror,Mirror"));
+        LVL9.add(new Riddle("Dalawang kawayan naguunahan sa paruruonan.", "binti,paa,Binti,Paa,Legs,legs"));
+        LVL9.add(new Riddle("Hindi tao, hindi hayop, nakikita sa taas ng bubong.", "Antena"));
+        LVL9.add(new Riddle("Naglalaro tuwing gabi, sa umaga nama'y nahihikbi", "Kwago,kwago,Owl,owl"));
+        
+        LVL10.add(new Riddle("Mataba ako ngunit walang tiyan, kung humuni’y parang palaka.", "Tipaklong,tipaklong,Grasshooper,grasshooper"));
+        LVL10.add(new Riddle("May ulo walang buhok, may katawan walang damit.", "Itlog,itlog,Egg,egg"));
+        LVL10.add(new Riddle("Hindi hayop, hindi tao, ngunit nakakakain.", "Pinggan,pinggan,Plato,plato"));
+        LVL10.add(new Riddle("Dalawang buto't balat, magkasama sa buhay.", "Sapatos,sapatos,Shoes,shoes"));
+        LVL10.add(new Riddle("Lumipad na ang oras, ngunit naiwan ang anino.", "Orasan,orasan,Clock,clock"));
+        LVL10.add(new Riddle("Ika'y sumilip makikita iyong kawangis.", "Salamin,salamin,Mirror,mirror"));
+
+        // Load progress if available
+        loadProgress();
+        try (Scanner scan = new Scanner(System.in)) {
+            System.out.println("* * ******** ** WELCOME TO JADDLE! ** ******** * *");
+            System.out.println("");
+            System.out.println("Press 's' to start the game or type 'exit' to quit.");
+            String start = scan.nextLine().toLowerCase();
+            if (start.equals("s")) {
+                while (true) {
+                    System.err.println();
+                    System.out.println("Current Level: " + currentLevel + ", Total Points: " + totalPoints + ", Lives: " + currentLives);
+                    System.out.println("Choose an option:");
+                    System.out.println("1. Play Level 1");
+                    if (currentLevel >= 2) System.out.println("2. Play Level 2");
+                    if (currentLevel >= 3) System.out.println("3. Play Level 3");
+                    if (currentLevel >= 4) System.out.println("4. Play Level 4");
+                    if (currentLevel >= 5) System.out.println("5. Play Level 5");
+                    if (currentLevel >= 6) System.out.println("6. Play Level 6");
+                    if (currentLevel >= 7) System.out.println("7. Play Level 7");
+                    if (currentLevel >= 8) System.out.println("8. Play Level 8");
+                    if (currentLevel >= 9) System.out.println("9. Play Level 9");
+                    if (currentLevel >= 10) System.out.println("10. Play Level 10");
+                    System.out.println("0. Exit");
+                    String choice = scan.nextLine();
+                    if (choice.equals("1")) {
+                        playLevelWithChoices(scan, LVL1, LEVEL_2_UNLOCK_POINTS, 2);
+                    } else if (choice.equals("2") && currentLevel >= 2) {
+                        playLevelWithChoices(scan, LVL2, LEVEL_3_UNLOCK_POINTS, 3);
+                    } else if (choice.equals("3") && currentLevel >= 3) {
+                        playLevelWithChoices(scan, LVL3, LEVEL_4_UNLOCK_POINTS, 4);
+                    } else if (choice.equals("4") && currentLevel >= 4) {
+                        playLevelWithChoices(scan, LVL4, LEVEL_5_UNLOCK_POINTS, 5);
+                    } else if (choice.equals("5") && currentLevel >= 5) {
+                        playLevelWithChoices(scan, LVL5, LEVEL_5_UNLOCK_POINTS, 6);
+                    } else if (choice.equals("6") && currentLevel >= 6) {
+                        playLevel(scan, LVL6, LEVEL_6_UNLOCK_POINTS, 7);
+                    } else if (choice.equals("7") && currentLevel >= 7) {
+                        playLevel(scan, LVL7, LEVEL_7_UNLOCK_POINTS, 8);
+                    } else if (choice.equals("8") && currentLevel >= 8) {
+                        playLevel(scan, LVL8, LEVEL_8_UNLOCK_POINTS, 9);
+                    } else if (choice.equals("9") && currentLevel >= 9) {
+                        playLevel(scan, LVL9, LEVEL_9_UNLOCK_POINTS, 10);
+                    } else if (choice.equals("10") && currentLevel >= 10) {
+                        playLevel(scan, LVL10, LEVEL_10_UNLOCK_POINTS, 11);
+                    } else if (choice.equals("0")) {
+                        saveProgress();
+                        System.out.println("Thanks for playing! Goodbye!");
+                        break;
+                    } else {
+                        System.out.println("Invalid choice. Try again.");
+                    }
+                }
+            } else if (start.equals("exit")) {
+                System.out.println("Goodbye!");
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        }
+    }
+  
+
+
+private static void playLevelWithChoices(Scanner scan, List<Riddle> levelRiddles, int unlockPoints, int nextLevel) {
+        System.out.println("******* WELCOME TO LEVEL " + currentLevel + " *******");
+        System.out.println("Current Level: " + currentLevel + ", Total Points: " + totalPoints + ", Lives: " + currentLives);
+
+
+        for (Riddle riddle : levelRiddles) {
+            System.out.println("Total Points: " + totalPoints + ", Lives: " + currentLives + ", Level Points: " + levelPoints);
+            System.out.println("Riddle: " + riddle.getRiddle());
+            System.out.println("Choices: " + riddle.getChoices());
+
+            String answer = scan.nextLine().toUpperCase().trim();
+            if (riddle.isCorrectAnswer(answer)) {
+    levelPoints += POINTS_PER_CORRECT_ANSWER;
+    totalPoints += POINTS_PER_CORRECT_ANSWER; // Update totalPoints as well
+    System.out.println("");
+    System.out.println("****Correct! You gained " + POINTS_PER_CORRECT_ANSWER + " points.****");  
+    System.out.println("Current Level: " + currentLevel + ", Total Points: " + totalPoints + ", Lives: " + currentLives);
+    System.out.println("");  
+    
+}
+             else {
+                handleIncorrectAnswer();
+                if (currentLives == 0) {
+                    waitAndRegenerateLives();
+                    return;
+                }
+            }
+        }
+        
+        if (levelPoints >= unlockPoints) {
+            currentLevel = nextLevel;
+            System.out.println("Level " + nextLevel + " unlocked!");
+        }
+    }
+     
+
+
+     // Stats
+    private static void playLevel(Scanner scan, List<Riddle> levelRiddles, int unlockPoints, int nextLevel) {
+        System.out.println("******* WELCOME TO LEVEL " + currentLevel + " *******");
+        System.out.println("Current Level: " + currentLevel + ", Total Points: " + totalPoints + ", Lives: " + currentLives);
+
+
+        for (Riddle riddle : levelRiddles) {
+            System.out.println("Total Points: " + totalPoints + ", Lives: " + currentLives + ", Level Points: " + levelPoints);
+            System.out.println("Riddle: " + riddle.getRiddle());
+
+            String answer = scan.nextLine().toLowerCase().trim();
+            if (riddle.isCorrectAnswer(answer)) {
+    
+    levelPoints += POINTS_PER_CORRECT_ANSWER;
+    totalPoints += POINTS_PER_CORRECT_ANSWER; // Update totalPoints as well
+    System.out.println("Correct! You gained " + POINTS_PER_CORRECT_ANSWER + " points.");
+}              else {
+                handleIncorrectAnswer();
+                if (currentLives == 0) {
+                    waitAndRegenerateLives();
+                    return;
+                }
+            }
+        }
+
+        if (levelPoints >= unlockPoints) {
+            currentLevel = nextLevel;
+            System.out.println("Level " + nextLevel + " unlocked!");
+        }
+    }
+
+    private static void handleIncorrectAnswer() {
+        if (levelPoints - POINTS_DEDUCT_WRONG_ANSWER >= 0) {
+            levelPoints -= POINTS_DEDUCT_WRONG_ANSWER;
+        } else {
+            levelPoints = 0;
+        }
+        currentLives--;
+        System.out.println("***Wrong! You lost 5 points and 1 life.***");
+    }
+
+    private static void waitAndRegenerateLives() {
+    System.out.println("You have no lives left. Waiting for 10 seconds to regenerate lives...");
+    try {
+        Thread.sleep(LIFE_REGENERATION_TIME); // Wait for 10 seconds
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    currentLives = MAX_LIVES;
+    levelPoints = 0; // Reset level points but keep total points intact
+    System.out.println("Lives regenerated! You now have " + MAX_LIVES + " lives.");
+}
+
+
+
+    private static void loadProgress() {
+    try (BufferedReader br = new BufferedReader(new FileReader("progress.txt"))) {
+        currentLevel = Integer.parseInt(br.readLine());
+        currentLives = Integer.parseInt(br.readLine());
+        totalPoints = Integer.parseInt(br.readLine()); // Load totalPoints
+    } catch (IOException e) {
+        // No progress file found, start fresh
+    }
+
+    }
+    private static void saveProgress() {
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter("progress.txt"))) {
+        bw.newLine();
+        bw.write(String.valueOf(currentLevel));
+        bw.newLine();
+        bw.write(String.valueOf(currentLives));
+        bw.newLine();
+        bw.write(String.valueOf(totalPoints)); // Save totalPoints
+    } catch (IOException e) {
+        System.out.println("Failed to save progress.");
+    }
+}
+
+}
+class Riddle {
+    private final String riddle;
+    private final List<String> answers; // Multiple answers for levels 6 and beyond
+    private final String choices; // Choices for levels 1 to 5
+    private final String correctAnswer; // Single correct answer for levels 1 to 5
+
+    // Constructor for levels 1 to 5 (single correct answer with choices)
+    public Riddle(String riddle, String choices, String correctAnswer) {
+        this.riddle = riddle;
+        this.choices = choices;
+        this.correctAnswer = correctAnswer;
+        this.answers = new ArrayList<>();
+    }
+
+    // Constructor for levels 6 to 10 (multiple answers without choices)
+    public Riddle(String riddle, String... answers) {
+        this.riddle = riddle;
+        this.answers = List.of(answers);  // Store multiple possible correct answers
+        this.choices = "";  // No choices for these levels
+        this.correctAnswer = "";  // Not needed for these levels, as we use multiple answers
+    }
+
+    public String getRiddle() {
+        return riddle;
+    }
+
+    public List<String> getAnswers() {
+        return answers;
+    }
+
+    public String getChoices() {
+        return choices;
+    }
+
+    public boolean isCorrectAnswer(String answer) {
+    // For levels with choices, check against correctAnswer
+    if (!choices.isEmpty()) {
+        return answer.equalsIgnoreCase(correctAnswer);
+    }
+    // For levels without choices, check if the answer is in the answers list
+    return answers.contains(answer.toLowerCase());
+}
+
+}
